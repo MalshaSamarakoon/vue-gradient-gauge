@@ -1,27 +1,35 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
-</template>
-
-<script lang="ts">
-import { defineComponent } from 'vue';
-import HelloWorld from './components/HelloWorld.vue';
-
-export default defineComponent({
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-});
-</script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+  <CircleGauge :intervals="intervals" :size="300" />
+  </template>
+ 
+ <script lang="ts">
+ import { defineComponent, ref } from 'vue';
+ import CircleGauge from './components/CircleGauge.vue';
+ 
+ export default defineComponent({
+   name: 'App',
+   components: {
+     CircleGauge,
+   },
+   setup() {
+     const intervals = ref([
+       { value: 0, color: '#E1CA46' },
+       { value: 50, color: '#75C952' },
+       { value: 100, color: '#469ED5' },
+     ]);
+ 
+     return { intervals };
+   },
+ });
+ </script>
+ 
+ <style>
+ #app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+ }
+ </style>
+ 
+ 
