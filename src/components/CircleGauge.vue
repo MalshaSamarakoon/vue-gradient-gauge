@@ -1,7 +1,7 @@
 <template>
   <div :style="containerStyle" class="gauge__component">
     <div>
-      <div class="gauge__ring" :style="getGaugeStyle">
+      <div class="gauge__ring" :style="getGaugeStyle"> 
         <div class="gauge__inner">
           <div class="gauge__value gauge__value--current">
             {{ currentValue }}
@@ -46,7 +46,7 @@ export default defineComponent({
       isDragging: false,
       startX: 0,
       startY: 0,
-      currentAngle: 58.6,
+      currentAngle: 58.6, // Initial angle 
     };
   },
   computed: {
@@ -72,15 +72,17 @@ export default defineComponent({
       };
     },
     pinStyle() {
+        // Rotate the pin based on 'currentAngle' 
       return {
         transform: `rotate(${this.currentAngle}deg)`,
-        transformOrigin: "50% 50%",
+        transformOrigin: "50% 50%", // Around the center of the pin
       };
     },
     currentValue() {
+      // Calculate the value based on the pin's angle
       const minAngle = 0;
       const maxAngle = 360;
-      const minValue = -23.33;
+      const minValue = -23.33; // To set initial value to 0.00
       const maxValue = 120;
       const angle = this.currentAngle;
 
@@ -97,27 +99,26 @@ export default defineComponent({
       this.startY = event.clientY;
     },
     rotatePin(event: any) {
-      if (this.isDragging) {
-        const deltaX = event.clientX - this.startX;
-        const deltaY = event.clientY - this.startY;
-        const radius = this.size / 2;
-        let angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
+  if (this.isDragging) {
+    const deltaX = event.clientX - this.startX;
+    const deltaY = event.clientY - this.startY;
 
-        if (angle < 60) {
-          angle += 360;
-        } else if (angle >= 360) {
-          angle -= 360;
-        }
+    let angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
 
-        if (angle >= 0 && angle <= 100) {
-          return;
-        }
+    // To Ensure the angle is within the non-transparent range
+    const nonTransparentRange = [60, 240];
+    const percentage = (angle - nonTransparentRange[0]) / (nonTransparentRange[1] - nonTransparentRange[0]);
 
-        this.currentAngle = angle;
-        this.startX = event.clientX;
-        this.startY = event.clientY;
-      }
-    },
+    // Restrict rotation within the non-transparent range
+    if (percentage < 0 || percentage > 1) {
+      return; 
+    }
+
+    this.currentAngle = angle;
+    this.startX = event.clientX;
+    this.startY = event.clientY;
+  }
+},
 
     stopDrag() {
       this.isDragging = false;
@@ -132,7 +133,6 @@ export default defineComponent({
   justify-content: center;
   align-items: center;
 }
-
 .gauge__ring {
   position: relative;
   --pointerleft: 11%;
@@ -142,7 +142,6 @@ export default defineComponent({
   height: 50vmin;
   border-radius: 50%;
 }
-
 .gauge__inner {
   width: 75%;
   height: 75%;
@@ -153,7 +152,6 @@ export default defineComponent({
   transform: translate(-50%, -50%);
   border-radius: 50%;
 }
-
 .gauge__value--current {
   display: inline-block;
   top: 50%;
@@ -162,7 +160,6 @@ export default defineComponent({
   text-align: center;
   font-size: 6vmin !important;
 }
-
 .pin {
   position: absolute;
   content: "";
@@ -170,7 +167,6 @@ export default defineComponent({
   top: var(--pointertop);
   transform: rotate(var(--pointerdeg));
 }
-
 .pin::before {
   content: "";
   position: absolute;
@@ -184,24 +180,20 @@ export default defineComponent({
   left: 50%;
   transform: translateX(-50%) rotate(0deg);
 }
-
 .gauge__value {
   position: absolute;
   color: black;
-  font-size: 2vmin;
+  font-size: 3vmin;
 }
-
 .gauge__value--start {
   left: -20%;
   bottom: 2%;
 }
-
 .gauge__value--middle {
   top: -30%;
   left: 50%;
   transform: translateX(-50%);
 }
-
 .gauge__value--end {
   right: -20%;
   bottom: 2%;
